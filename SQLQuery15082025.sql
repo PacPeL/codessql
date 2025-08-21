@@ -12,8 +12,8 @@ CREATE TABLE Notas(
 )
 
 INSERT INTO Alunos(Nome, DataNascimento) VALUES
---('Abraham', '2006-06-02'),
---('Samuel', '2006-07-20');
+('Abraham', '2006-06-02'),
+('Samuel', '2006-07-20'),
 ('Test', '2025-08-15');
 
 INSERT INTO Notas(IdAluno, Disciplina, Nota) VALUES
@@ -31,12 +31,12 @@ SELECT * FROM Alunos A
 INNER JOIN Notas N ON A.IdAluno = N.IdAluno
 ORDER BY Nota DESC
 
-SELECT A.Nome, AVG(N.Nota) AS Media
-FROM Alunos A
-INNER JOIN Notas N ON A.IdAluno = N.IdAluno
-GROUP BY A.Nome
-HAVING AVG(N.Nota) > 7.5
 
+SELECT a.Nome, AVG(n.Nota) AS Media
+FROM Alunos a
+INNER JOIN Notas n ON a.IdAluno = n.IdAluno
+GROUP BY a.Nome
+HAVING AVG(n.Nota) > 7.5
 
 
 SELECT Disciplina, AVG(Nota) AS Media
@@ -44,28 +44,46 @@ FROM Notas
 GROUP BY Disciplina
 
 
+SELECT *
+FROM Alunos A
+INNER JOIN Notas N ON A.IdAluno = N.IdAluno
+GROUP BY A.Nome
+
+SELECT A.Nome, AVG(N.Nota) AS Media
+FROM Alunos A
+INNER JOIN Notas N ON A.IdAluno = N.IdAluno
+GROUP BY A.Nome
+HAVING AVG(N.Nota) > 7
+
+
 SELECT * FROM Alunos a
 LEFT JOIN Notas n ON a.IdAluno = n.IdAluno
 WHERE n.Disciplina IS NULL
 
 
+SELECT * FROM Alunos a
+LEFT JOIN Notas n ON a.IdAluno = n.IdAluno
+WHERE n.IdNota IS NULL
 
-CREATE TABLE Filmes(
+---------------------------------------------------------------------------------------
+
+CREATE TABLE Filmes2(
 	IdFilme INT PRIMARY KEY IDENTITY(1,1),
 	Titulo VARCHAR(100),
 	Genero VARCHAR(100),
 	Ano DATE
 )
 
+
 CREATE TABLE Sessoes(
 	IdSessao INT PRIMARY KEY IDENTITY(1,1),
 	IdFilme INT,
 	Dia DATE,
 	Hora TIME
-	FOREIGN KEY (IdFilme) REFERENCES Filmes(IdFilme)
+	FOREIGN KEY (IdFilme) REFERENCES Filmes2(IdFilme)
 )
 
-INSERT INTO Filmes(Titulo, Genero, Ano) VALUES
+INSERT INTO Filmes2(Titulo, Genero, Ano) VALUES
 ('Spider-Man', 'Ficcion', '2002-06-02'),
 ('Spider-Man 2', 'Accion', '2004-04-19'),
 ('Spider-Man 3', 'Terror', '2007-07-07'),
@@ -81,26 +99,28 @@ INSERT INTO Sessoes(IdFilme, Dia, Hora) VALUES
 (1 , '2025-08-07', '20:00:00');
 
 
-SELECT * FROM Filmes F
+SELECT * FROM Filmes2 F
 WHERE Genero = 'Accion'
 
-SELECT * FROM Filmes f
+SELECT * FROM Filmes2 f
 INNER JOIN Sessoes s ON f.IdFilme = s.IdFilme
 WHERE YEAR(f.Ano) > '2004'
 
+SELECT * FROM Filmes2 f
+INNER JOIN Sessoes s ON f.IdFilme = s.IdFilme
+WHERE YEAR(Ano) > 2002
 
-
-SELECT Titulo, COUNT(*) Total FROM Filmes f
+SELECT Titulo, COUNT(*) Total FROM Filmes2 f
 INNER JOIN Sessoes s ON f.IdFilme = s.IdFilme
 GROUP BY Titulo
 ORDER BY Total DESC
 
 
 
-SELECT Titulo, Dia FROM Filmes f
+SELECT Titulo, Dia FROM Filmes2 f
 INNER JOIN Sessoes s ON f.IdFilme = s.IdFilme
 
-
+--------------------------------------------------------------------------------------
 
 CREATE TABLE Pacientes(
 	IdPaciente INT PRIMARY KEY IDENTITY(1,1),
@@ -133,6 +153,8 @@ INSERT INTO Consultas(IdPaciente, DataConsulta, Medico) VALUES
 (4, '2025-08-01', 'Aaron'),
 (4, '2025-08-01', 'Migdalia');
 
+SELECT * FROM Consultas
+
 SELECT * FROM Pacientes p
 INNER JOIN Consultas c ON p.IdPaciente = c.IdPaciente
 WHERE c.Medico = 'Migdalia'
@@ -152,11 +174,15 @@ LEFT JOIN Consultas c ON p.IdPaciente = c.IdPaciente
 WHERE IdConsulta IS NULL
 
 
-SELECT TOP (1) Nome, DataConsulta 
+SELECT TOP 1 Nome, MIN(DataNascimento) AS Velho
 FROM Pacientes p
 INNER JOIN Consultas c ON p.IdPaciente = c.IdPaciente
-ORDER BY DataConsulta 
+GROUP BY Nome
+ORDER BY Velho
 
+
+
+---------------------------------------------------------------------
 
 
 CREATE TABLE Albuns(
